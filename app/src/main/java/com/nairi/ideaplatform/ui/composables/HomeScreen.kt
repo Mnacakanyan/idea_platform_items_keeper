@@ -1,6 +1,5 @@
 package com.nairi.ideaplatform.ui.composables
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,11 +10,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.nairi.ideaplatform.R
 import com.nairi.ideaplatform.ui.viewmodel.UiAction
@@ -52,15 +54,16 @@ fun HomeScreen(
         searchText = uiState.searchText
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .clickable(
-            interactionSource = null,
-            indication = null
-        ) {
-            keyboardController?.hide()
-            focusManager.clearFocus()
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = null,
+                indication = null
+            ) {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
     ) {
         LazyColumn(
             modifier = Modifier
@@ -70,13 +73,13 @@ fun HomeScreen(
             state = scrollState
         ) {
             item {
-                TextField(
+                OutlinedTextField(
                     value = searchText,
                     onValueChange = { newValue ->
                         searchText = newValue
                         onAction(UiAction.Search(newValue))
                     },
-                    placeholder = { Text(text = stringResource(id = R.string.search_items)) },
+                    label = { Text(text = stringResource(id = R.string.search_items)) },
                     trailingIcon = {
                         if (searchText.isNotEmpty()) {
                             Icon(
@@ -89,23 +92,25 @@ fun HomeScreen(
                             )
                         }
                     },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            onAction(UiAction.Search(searchText))
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    ),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black,
-                            shape = RoundedCornerShape(4.dp)
-                        ),
-
-                    )
+                        .padding(top = 16.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
             }
 
             items(uiState.items, key = { it.id }) { searchItem ->

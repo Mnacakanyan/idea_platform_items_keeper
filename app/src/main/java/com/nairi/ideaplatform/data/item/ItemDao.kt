@@ -10,17 +10,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ItemDao {
 
-    @Query("SELECT * FROM ItemEntity")
+    @Query("SELECT * FROM item")
     fun getAll(): Flow<List<ItemEntity>>
 
-    @Query("SELECT * FROM ItemEntity WHERE name LIKE '%' || :name || '%'")
+    @Query("SELECT * FROM item WHERE name LIKE '%' || :name || '%'")
     fun findByName(name: String): Flow<List<ItemEntity>>
 
 
-    @Query("DELETE FROM ItemEntity WHERE id = :id")
+    @Query("DELETE FROM item WHERE id = :id")
     suspend fun deleteById(id: Long)
 
-    @Query("UPDATE ItemEntity SET count = :item WHERE id = :id")
+    @Query("UPDATE item SET amount = :item WHERE id = :id")
     suspend fun updateQuantity(id: Long, item: Int)
 
 }

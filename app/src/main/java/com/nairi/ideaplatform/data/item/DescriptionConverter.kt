@@ -6,13 +6,17 @@ class DescriptionConverter {
 
     @TypeConverter
     fun fromDescription(description: List<String>): String {
-        return description.joinToString(",")
+        return description.joinToString(",") { "\"$it\"" }
+            .let { "[$it]" }
     }
 
     @TypeConverter
     fun toDescription(description: String): List<String> {
-        if (description.isEmpty()) return emptyList()
-        return description.split(",")
+        val tags = description.removeSurrounding("[", "]")
+        if (tags.isEmpty()) return emptyList()
+        return tags
+            .split(",")
+            .map { it.trim().removeSurrounding("\"") }
     }
 
 }

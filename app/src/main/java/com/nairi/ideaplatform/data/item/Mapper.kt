@@ -10,8 +10,8 @@ fun ItemEntity.toDomain(): Item {
     return Item(
         id = id,
         name = name,
-        desc = desc,
-        count = count,
-        date = date,
+        desc = tags,
+        count = amount,
+        date = time,
     )
 }
